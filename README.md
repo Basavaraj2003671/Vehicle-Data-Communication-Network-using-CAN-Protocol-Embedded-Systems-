@@ -1,0 +1,2 @@
+# Vehicle-Data-Communication-Network-using-CAN-Protocol-Embedded-Systems-
+This project demonstrates real-time sensor data transfer between two Arduino boards using the CAN (Controller Area Network) protocol. A DHT11 sensor connected to an Arduino Nano (Transmitter Node) sends temperature and humidity data via the MCP2515 CAN bus module to an Arduino UNO (Receiver Node), which displays the data on a 16×2 LCD.  
