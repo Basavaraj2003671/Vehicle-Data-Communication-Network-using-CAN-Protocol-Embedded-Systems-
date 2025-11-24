@@ -1,0 +1,41 @@
+#include <SPI.h>
+#include <mcp2515.h>
+#include <LiquidCrystal.h>
+
+const int rs = 3, en = 4, d4 = 5, d5 = 6, d6 = 7, d7 = 8;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+struct can_frame canMsg;
+MCP2515 mcp2515(10);
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.print("CAN Arduino");
+  delay(3000);
+  lcd.clear();
+
+  SPI.begin();
+  Serial.begin(9600);
+
+  mcp2515.reset();
+  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
+  mcp2515.setNormalMode();
+}
+
+void loop() {
+  if (mcp2515.readMessage(&canMsg) == MCP2515::ERROR_OK) {
+    int humidity = canMsg.data[0];
+    int temp = canMsg.data[1];
+
+    lcd.setCursor(0, 0);
+    lcd.print("Humidity: ");
+    lcd.print(humidity);
+
+    lcd.setCursor(0, 1);
+    lcd.print("Temp: ");
+    lcd.print(temp);
+
+    delay(1000);
+    lcd.clear();
+  }
+}
