@@ -1,0 +1,37 @@
+#include <SPI.h>
+#include <mcp2515.h>
+#include <DHT.h>
+
+#define DHTPIN A0
+#define DHTTYPE DHT11
+
+struct can_frame canMsg;
+MCP2515 mcp2515(10);
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  SPI.begin();
+  dht.begin();
+  
+  mcp2515.reset();
+  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
+  mcp2515.setNormalMode();
+}
+
+void loop() {
+  int h = dht.readHumidity();
+  int t = dht.readTemperature();
+
+  canMsg.can_id  = 0x036;
+  canMsg.can_dlc = 8;
+
+  canMsg.data[0] = h;
+  canMsg.data[1] = t;
+
+  for (int i = 2; i < 8; i++)
+    canMsg.data[i] = 0x00;
+
+  mcp2515.sendMessage(&canMsg);
+  delay(1000);
+}
